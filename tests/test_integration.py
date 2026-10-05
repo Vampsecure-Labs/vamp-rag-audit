@@ -8,14 +8,9 @@ checks de inyección indirecta, Unicode poisoning, overflow y desfase de fuentes
 
 import asyncio
 import json
-import sys
-from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
-import pytest
-
 import vamp_rag_audit as rag_audit
-
 
 # ────────────────────────────────────────────────────────────────────────────
 # Tests de RAG-001: inyección indirecta de prompt

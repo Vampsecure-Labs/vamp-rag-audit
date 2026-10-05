@@ -7,14 +7,8 @@ los checks disponibles y las funciones de exportación.
 """
 
 import json
-import sys
-from pathlib import Path
-from unittest.mock import MagicMock
-
-import pytest
 
 import vamp_rag_audit as rag_audit
-
 
 # ────────────────────────────────────────────────────────────────────────────
 # Tests de _detectar_compromiso

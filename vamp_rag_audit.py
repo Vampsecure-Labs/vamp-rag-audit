@@ -8,6 +8,7 @@ embedding attacks, context overflow, retrieval manipulation.
 VampSecure Labs · VampSecure Studios
 Para Uso Exclusivo en Pruebas de Penetración Autorizadas — v1.0
 """
+from __future__ import annotations
 
 import argparse
 import asyncio
@@ -15,17 +16,15 @@ import json
 import re
 import sys
 import time
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from datetime import datetime
-from typing import Optional
 
 import aiohttp
 import yaml
+from rich import box
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
-from rich.text import Text
-from rich import box
 
 # ---------------------------------------------------------------------------
 # Constantes globales
@@ -98,7 +97,7 @@ class ResultadoCheck:
     severidad: str
     titulo: str
     estado: str                # VULNERABLE / SEGURO / ERROR / OMITIDO
-    hallazgo: Optional[Hallazgo] = None
+    hallazgo: Hallazgo | None = None
     error_msg: str = ""
     duracion_ms: int = 0
 
@@ -113,14 +112,14 @@ class ClienteRAG:
     def __init__(
         self,
         endpoint: str,
-        api_key: Optional[str] = None,
+        api_key: str | None = None,
         timeout: int = 30,
     ):
         self.endpoint = endpoint.rstrip("/")
         self.api_key = api_key
         self.timeout = aiohttp.ClientTimeout(total=timeout)
         # Formato detectado: "openai" | "generico"
-        self._formato: Optional[str] = None
+        self._formato: str | None = None
 
     def _construir_headers(self) -> dict:
         """Construye las cabeceras HTTP para la petición."""
@@ -167,7 +166,7 @@ class ClienteRAG:
         self,
         session: aiohttp.ClientSession,
         query: str,
-        contexto_extra: Optional[str] = None,
+        contexto_extra: str | None = None,
     ) -> tuple[int, str]:
         """
         Envía una query al endpoint RAG/LLM.
@@ -228,7 +227,7 @@ def _detectar_compromiso(
     respuesta: str,
     payload: str,
     tipo: str,
-    respuesta_original: Optional[str] = None,
+    respuesta_original: str | None = None,
 ) -> bool:
     """
     Analiza la respuesta del LLM para detectar si fue comprometida.
@@ -399,7 +398,7 @@ async def check_rag001_indirect_prompt_injection(
     query_usuario = "¿Cuál es la política de seguridad de la empresa?"
 
     try:
-        status, raw = await cliente.enviar_query(
+        _status, raw = await cliente.enviar_query(
             session, query_usuario, contexto_extra=contexto_inyectado
         )
         respuesta = ClienteRAG.extraer_texto_respuesta(raw)
@@ -477,7 +476,7 @@ async def check_rag002_context_poisoning_unicode(
     query_usuario = "Resume el contenido del documento."
 
     try:
-        status, raw = await cliente.enviar_query(
+        _status, raw = await cliente.enviar_query(
             session, query_usuario, contexto_extra=contexto_envenenado
         )
         respuesta = ClienteRAG.extraer_texto_respuesta(raw)
@@ -554,7 +553,7 @@ async def check_rag003_data_exfiltration(
 
     for payload in payloads_exfiltración:
         try:
-            status, raw = await cliente.enviar_query(session, payload)
+            _status, raw = await cliente.enviar_query(session, payload)
             respuesta = ClienteRAG.extraer_texto_respuesta(raw)
 
             if _detectar_compromiso(respuesta, payload, check_id):
@@ -630,7 +629,7 @@ async def check_rag004_context_window_overflow(
     payload_completo = relleno_inofensivo + instruccion_maliciosa
 
     try:
-        status, raw = await cliente.enviar_query(session, payload_completo)
+        _status, raw = await cliente.enviar_query(session, payload_completo)
         respuesta = ClienteRAG.extraer_texto_respuesta(raw)
         duracion = int((time.monotonic() - inicio) * 1000)
 
@@ -702,7 +701,7 @@ async def check_rag005_source_attribution_bypass(
     query_usuario = "Necesito el resumen ejecutivo del manual de seguridad oficial."
 
     try:
-        status, raw = await cliente.enviar_query(
+        _status, raw = await cliente.enviar_query(
             session, query_usuario, contexto_extra=contexto_fuente_falsa
         )
         respuesta = ClienteRAG.extraer_texto_respuesta(raw)
@@ -778,7 +777,7 @@ async def check_rag006_retrieval_query_injection(
 
     for payload in payloads_injection:
         try:
-            status, raw = await cliente.enviar_query(session, payload)
+            _status, raw = await cliente.enviar_query(session, payload)
             respuesta = ClienteRAG.extraer_texto_respuesta(raw)
 
             if _detectar_compromiso(respuesta, payload, check_id):
@@ -845,7 +844,7 @@ async def check_rag007_agentic_tool_invocation(
     query_usuario = "Procesa la solicitud de auditoría del sistema."
 
     try:
-        status, raw = await cliente.enviar_query(
+        _status, raw = await cliente.enviar_query(
             session, query_usuario, contexto_extra=contexto_tool_injection
         )
         respuesta = ClienteRAG.extraer_texto_respuesta(raw)
@@ -922,7 +921,7 @@ async def check_rag008_metadata_poisoning(
     query_usuario = "Dame el resumen del documento de procedimientos operativos."
 
     try:
-        status, raw = await cliente.enviar_query(
+        _status, raw = await cliente.enviar_query(
             session, query_usuario, contexto_extra=contexto_metadata
         )
         respuesta = ClienteRAG.extraer_texto_respuesta(raw)
@@ -997,7 +996,7 @@ async def check_rag009_embedding_information_disclosure(
 
     for payload in payloads_enumeracion:
         try:
-            status, raw = await cliente.enviar_query(session, payload)
+            _status, raw = await cliente.enviar_query(session, payload)
             respuesta = ClienteRAG.extraer_texto_respuesta(raw)
 
             if _detectar_compromiso(respuesta, payload, check_id):
@@ -1065,7 +1064,7 @@ async def check_rag010_missing_input_sanitization(
 
     for payload in payloads_xss:
         try:
-            status, raw = await cliente.enviar_query(session, payload)
+            _status, raw = await cliente.enviar_query(session, payload)
             respuesta = ClienteRAG.extraer_texto_respuesta(raw)
 
             # Verificar si el HTML llega sin escapar en la respuesta
@@ -1135,10 +1134,10 @@ ORDEN_SEVERIDAD = {"CRITICAL": 0, "HIGH": 1, "MEDIUM": 2, "LOW": 3, "INFO": 4}
 
 async def ejecutar_auditoria(
     endpoint: str,
-    api_key: Optional[str],
+    api_key: str | None,
     timeout: int,
     checks_seleccionados: list[str],
-    severidad_minima: Optional[str],
+    severidad_minima: str | None,
 ) -> list[ResultadoCheck]:
     """
     Ejecuta los checks seleccionados contra el endpoint RAG/LLM.
@@ -1257,10 +1256,10 @@ def renderizar_tabla(resultados: list[ResultadoCheck]) -> None:
     for r in resultados:
         color = _color_severidad(r.severidad)
         estado_text = {
-            "VULNERABLE": f"[bold red]● VULNERABLE[/bold red]",
-            "SEGURO": f"[bold green]✓ SEGURO[/bold green]",
-            "ERROR": f"[bold yellow]⚠ ERROR[/bold yellow]",
-            "OMITIDO": f"[dim]— OMITIDO[/dim]",
+            "VULNERABLE": "[bold red]● VULNERABLE[/bold red]",
+            "SEGURO": "[bold green]✓ SEGURO[/bold green]",
+            "ERROR": "[bold yellow]⚠ ERROR[/bold yellow]",
+            "OMITIDO": "[dim]— OMITIDO[/dim]",
         }.get(r.estado, r.estado)
 
         tabla.add_row(
