@@ -1,5 +1,7 @@
 # vamp-rag-audit
 
+  <img src="https://github.com/Vampsecure-Labs/vamp-rag-audit/actions/workflows/ci.yml/badge.svg" alt="CI"/>
+
 **RAG and agentic AI security auditor** — VampSecure Labs · VampSecure Studios
 
 Auditor de seguridad activo para sistemas de Retrieval-Augmented Generation (RAG) e IA agéntica.
