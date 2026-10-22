@@ -1614,6 +1614,13 @@ def construir_parser() -> argparse.ArgumentParser:
         help="Guardar informe HTML en el fichero indicado",
     )
     probe.add_argument(
+        "--json",
+        metavar="FICHERO",
+        default=None,
+        dest="json_file",
+        help="Exportar resultados a JSON en el fichero indicado",
+    )
+    probe.add_argument(
         "--timeout",
         type=int,
         default=30,
@@ -1718,6 +1725,16 @@ def main() -> None:
             console.print()
             renderizar_resumen(todos_resultados)
             renderizar_detalles_hallazgos(todos_resultados)
+
+        # Exportar a JSON en fichero si se solicitó. Es la convención del resto
+        # del toolkit (--json FICHERO) y lo que necesita vamp-orchestrator para
+        # recoger los hallazgos: sin ella, esta herramienta no se puede orquestar.
+        if getattr(args, "json_file", None):
+            ep_principal = endpoints[0] if endpoints else "N/A"
+            with open(args.json_file, "w", encoding="utf-8") as f:
+                f.write(exportar_json(todos_resultados, ep_principal))
+            if args.format != "json":
+                console.print(f"\n[green]Resultados JSON guardados en: {args.json_file}[/green]")
 
         # Guardar informe HTML si se solicitó
         if args.output:
