@@ -97,7 +97,7 @@ $ vamp-rag-audit probe http://api.example.com/chat \
 
 ```
 ╭──────────────────────────────────────────────────────────────────────────────╮
-│  vamp-rag-audit v1.1 · VampSecure Labs Security Research Division            │
+│  vamp-rag-audit v1.0 · VampSecure Labs Security Research Division            │
 │  Target: http://api.example.com/chat  ·  Min severity: MEDIUM                │
 ╰──────────────────────────────────────────────────────────────────────────────╯
 
@@ -282,7 +282,7 @@ $ vamp-rag-audit probe http://api.example.com/chat \
 
 ```
 ╭──────────────────────────────────────────────────────────────────────────────╮
-│  vamp-rag-audit v1.1 · VampSecure Labs Security Research Division            │
+│  vamp-rag-audit v1.0 · VampSecure Labs Security Research Division            │
 │  Target: http://api.example.com/chat  ·  Min severity: MEDIUM                │
 ╰──────────────────────────────────────────────────────────────────────────────╯
 
