@@ -30,7 +30,7 @@ from rich.table import Table
 # Constantes globales
 # ---------------------------------------------------------------------------
 
-VERSION = "1.0"
+VERSION = "1.2"
 BANNER = f"""
 [bold cyan]vamp-rag-audit[/bold cyan] [dim]v{VERSION}[/dim]
 [dim]VampSecure Labs · VampSecure Studios[/dim]
