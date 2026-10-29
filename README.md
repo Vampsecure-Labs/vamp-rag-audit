@@ -97,7 +97,7 @@ $ vamp-rag-audit probe http://api.example.com/chat \
 
 ```
 ╭──────────────────────────────────────────────────────────────────────────────╮
-│  vamp-rag-audit v1.2 · VampSecure Labs Security Research Division            │
+│  vamp-rag-audit v1.3 · VampSecure Labs Security Research Division            │
 │  Target: http://api.example.com/chat  ·  Min severity: MEDIUM                │
 ╰──────────────────────────────────────────────────────────────────────────────╯
 
@@ -182,6 +182,7 @@ HTML report → rag_report.html
 
 | Version | Main changes |
 |---------|-------------|
+| v1.3 | `--json FILE` output for orchestration (consumable by vamp-orchestrator). |
 | v1.1 | Bilingual README (EN/ES) |
 | v1.0 | Initial release — 10 RAG/agentic AI security checks, OWASP LLM Top 10 2025 mapping |
 
@@ -282,7 +283,7 @@ $ vamp-rag-audit probe http://api.example.com/chat \
 
 ```
 ╭──────────────────────────────────────────────────────────────────────────────╮
-│  vamp-rag-audit v1.2 · VampSecure Labs Security Research Division            │
+│  vamp-rag-audit v1.3 · VampSecure Labs Security Research Division            │
 │  Target: http://api.example.com/chat  ·  Min severity: MEDIUM                │
 ╰──────────────────────────────────────────────────────────────────────────────╯
 
@@ -367,6 +368,7 @@ Informe HTML → informe_rag.html
 
 | Versión | Cambios principales |
 |---------|---------------------|
+| v1.3 | Salida `--json FICHERO` para orquestación (consumible por vamp-orchestrator). |
 | v1.1 | README bilingüe (EN/ES) |
 | v1.0 | Versión inicial — 10 checks de seguridad RAG/IA agéntica, mapping OWASP LLM Top 10 2025 |
 
